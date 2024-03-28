@@ -22,7 +22,6 @@ jobs:
               # Example command to deploy your Next.js project to a staging environment
               # Adjust the command to match your deployment strategy (e.g., Vercel, Netlify)
               echo "Deploying ${CIRCLE_BRANCH} to staging"
-              npm run export # For static sites
               # Or use your deployment CLI tool/command here
             fi
 
