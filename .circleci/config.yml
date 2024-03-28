@@ -1,38 +1,41 @@
 version: 2.1
 
 jobs:
-  build_and_test:
+  test:
     docker:
-      - image: cimg/node:current # Use a Node.js environment
+      - image: cimg/node:current
     steps:
       - checkout
       - run: npm install
-      - run: npm run build # Build your Next.js project
+      - run: npm test
 
-  deploy_to_staging:
+  deploy_to_vercel:
     docker:
       - image: cimg/node:current
     steps:
       - checkout
       - run: npm install
       - run:
-          name: Deploy to Staging
+          name: Install Vercel CLI
+          command: npm install -g vercel
+      - run:
+          name: Deploy to Vercel
           command: |
             if [ "${CIRCLE_BRANCH}" != "main" ]; then
-              # Example command to deploy your Next.js project to a staging environment
-              # Adjust the command to match your deployment strategy (e.g., Vercel, Netlify)
-              echo "Deploying ${CIRCLE_BRANCH} to staging"
-              # Or use your deployment CLI tool/command here
+              # Deploy non-main branches to Vercel under preview deployments
+              vercel --token $VERCEL_TOKEN --confirm --scope $VERCEL_TEAM_ID
+            else
+              echo "Main branch deployments are handled automatically by Vercel integration."
             fi
 
 workflows:
   version: 2
-  build_deploy:
+  build_and_deploy:
     jobs:
-      - build_and_test
-      - deploy_to_staging:
+      - test
+      - deploy_to_vercel:
           requires:
-            - build_and_test
+            - test
           filters:
             branches:
-              ignore: main # Ignore the main branch for this deployment job
+              ignore: main # Adjust this if you want to deploy main through CircleCI as well
