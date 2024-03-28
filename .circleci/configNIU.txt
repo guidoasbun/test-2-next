@@ -1,0 +1,38 @@
+version: 2.1
+
+jobs:
+  build_and_test:
+    docker:
+      - image: cimg/node:current # Use a Node.js environment
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run build # Build your Next.js project
+
+  deploy_to_staging:
+    docker:
+      - image: cimg/node:current
+    steps:
+      - checkout
+      - run: npm install
+      - run:
+          name: Deploy to Staging
+          command: |
+            if [ "${CIRCLE_BRANCH}" != "main" ]; then
+              # Example command to deploy your Next.js project to a staging environment
+              # Adjust the command to match your deployment strategy (e.g., Vercel, Netlify)
+              echo "Deploying ${CIRCLE_BRANCH} to staging"
+              # Or use your deployment CLI tool/command here
+            fi
+
+workflows:
+  version: 2
+  build_deploy:
+    jobs:
+      - build_and_test
+      - deploy_to_staging:
+          requires:
+            - build_and_test
+          filters:
+            branches:
+              ignore: main # Ignore the main branch for this deployment job
