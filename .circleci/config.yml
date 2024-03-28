@@ -24,7 +24,7 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" != "main" ]; then
               # Deploy non-main branches to Vercel under preview deployments
-              vercel --token $VERCEL_TOKEN --confirm --scope $VERCEL_TEAM_ID
+              vercel --token $VERCEL_TOKEN --confirm
             else
               echo "Main branch deployments are handled automatically by Vercel integration."
             fi
